@@ -24,7 +24,7 @@ public class MapperTests {
         assertThat(bookDto, is(notNullValue()));
         assertThat(bookDto.author(), equalTo(book.getAuthor()));
         assertThat(bookDto.title(), equalTo(book.getTitle()));
-        assertThat(bookDto.read(), equalTo(book.isRead()));
+        assertThat(bookDto.read(), equalTo(book.getRead()));
         assertThat(bookDto.pages(), equalTo(book.getPages()));
     }
 }
