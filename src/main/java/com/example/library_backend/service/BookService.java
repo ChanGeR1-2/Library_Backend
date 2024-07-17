@@ -27,7 +27,7 @@ public class BookService {
     }
 
     public boolean updateBook(BookDTO bookDTO) {
-        Optional<Book> opt = bookRepository.findDistinctByTitleAndAuthor(bookDTO.title(), bookDTO.author());
+        Optional<Book> opt = bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author());
         if (opt.isPresent()) {
             Book book = opt.get();
             book.setTitle(bookDTO.title());
