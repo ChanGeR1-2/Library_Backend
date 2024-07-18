@@ -24,23 +24,21 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<?> createBook(@RequestBody BookDTO bookDTO) {
-        bookService.addBook(bookDTO);
-        return ResponseEntity.ok().build();
+        BookDTO result = bookService.addBook(bookDTO);
+        return ResponseEntity.ok().body(result);
     }
 
     @PutMapping
     public ResponseEntity<?> updateBook(@RequestBody BookDTO bookDTO) {
-        if (bookService.updateBook(bookDTO)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        BookDTO bookDto = bookService.updateBook(bookDTO);
+
+        return ResponseEntity.ok().body(bookDto);
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteBook(@RequestBody BookDTO bookDTO) {
-        if (bookService.deleteBook(bookDTO)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        bookService.deleteBook(bookDTO);
+
+        return ResponseEntity.ok().build();
     }
 }

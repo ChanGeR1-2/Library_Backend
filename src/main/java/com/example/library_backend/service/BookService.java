@@ -1,5 +1,7 @@
 package com.example.library_backend.service;
 
+import com.example.library_backend.Exceptions.BookDoesNotExistException;
+import com.example.library_backend.Exceptions.BookExistsException;
 import com.example.library_backend.service.DTOs.BookDTO;
 import com.example.library_backend.domain.Book;
 import com.example.library_backend.persistence.BookRepository;
@@ -9,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @AllArgsConstructor
@@ -22,33 +23,30 @@ public class BookService {
         return books.stream().map(BookMapper.INSTANCE::bookToBookDTO).toList();
     }
 
-    public void addBook(BookDTO bookDTO) {
-        bookRepository.save(BookMapper.INSTANCE.bookDTOToBook(bookDTO));
+    public BookDTO addBook(BookDTO bookDTO) {
+        bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author())
+                .ifPresent(_ -> {
+                    throw new BookExistsException(bookDTO.title(), bookDTO.author());
+                });
+
+        return BookMapper.INSTANCE.bookToBookDTO(bookRepository.save(BookMapper.INSTANCE.bookDTOToBook(bookDTO)));
     }
 
-    public boolean updateBook(BookDTO bookDTO) {
-        Optional<Book> opt = bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author());
-        if (opt.isPresent()) {
-            Book book = opt.get();
-            book.setTitle(bookDTO.title());
-            book.setAuthor(bookDTO.author());
-            book.setRead(bookDTO.read());
-            book.setPages(bookDTO.pages());
-            bookRepository.save(book);
+    public BookDTO updateBook(BookDTO bookDTO) {
+        Book book = bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author())
+                .orElseThrow(() -> new BookDoesNotExistException(bookDTO.title(), bookDTO.author()));
 
-            return true;
-        }
-        return false;
+        book.setTitle(bookDTO.title());
+        book.setAuthor(bookDTO.author());
+        book.setRead(bookDTO.read());
+        book.setPages(bookDTO.pages());
+        return BookMapper.INSTANCE.bookToBookDTO(bookRepository.save(book));
     }
 
-    public boolean deleteBook(BookDTO bookDTO) {
-        Optional<Book> opt = bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author());
-        if (opt.isPresent()) {
-            Book book = opt.get();
-            bookRepository.deleteById(book.getId());
+    public void deleteBook(BookDTO bookDTO) {
+        Book book = bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author())
+                .orElseThrow(() -> new BookDoesNotExistException(bookDTO.title(), bookDTO.author()));
 
-            return true;
-        }
-        return false;
+        bookRepository.deleteById(book.getId());
     }
 }

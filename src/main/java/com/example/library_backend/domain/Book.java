@@ -12,6 +12,7 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
@@ -19,9 +20,9 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-public class Book {
+public class Book implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
     @Length(max = 255)
