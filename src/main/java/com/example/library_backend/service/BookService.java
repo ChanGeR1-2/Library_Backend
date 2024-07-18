@@ -40,4 +40,15 @@ public class BookService {
         }
         return false;
     }
+
+    public boolean deleteBook(BookDTO bookDTO) {
+        Optional<Book> opt = bookRepository.findByTitleAndAuthor(bookDTO.title(), bookDTO.author());
+        if (opt.isPresent()) {
+            Book book = opt.get();
+            bookRepository.deleteById(book.getId());
+
+            return true;
+        }
+        return false;
+    }
 }

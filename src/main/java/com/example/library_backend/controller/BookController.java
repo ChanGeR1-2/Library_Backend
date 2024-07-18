@@ -35,4 +35,12 @@ public class BookController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteBook(@RequestBody BookDTO bookDTO) {
+        if (bookService.deleteBook(bookDTO)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
 }
